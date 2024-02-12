@@ -23,6 +23,11 @@ public class ContainerOptionsBuilder(Type type)
     internal string? Name { get; private set; }
 
     /// <summary>
+    /// Name of the container.
+    /// </summary>
+    internal KeyResolver? keyResolver { get; private set; }
+
+    /// <summary>
     /// The partition key for the container.
     /// </summary>
     internal string? PartitionKey { get; private set; }
@@ -68,6 +73,18 @@ public class ContainerOptionsBuilder(Type type)
     public ContainerOptionsBuilder WithContainer(string name)
     {
         Name = name ?? throw new ArgumentNullException(nameof(name));
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the <see cref="keyResolver"/> of the container
+    /// </summary>
+    /// <param name="keyResolver">The key of the container</param>
+    /// <returns>Instance of <see cref="ContainerOptionsBuilder"/></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    public ContainerOptionsBuilder WithEncryption(KeyResolver keyResolver, string keyEncryptionKeyResolverName)
+    {
+        KeyResolver = keyResolver ?? throw new ArgumentNullException(nameof(keyResolver));
         return this;
     }
 
