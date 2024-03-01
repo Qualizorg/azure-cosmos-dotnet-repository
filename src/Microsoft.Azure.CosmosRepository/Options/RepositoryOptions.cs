@@ -1,6 +1,8 @@
 ﻿// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
+using Azure.Security.KeyVault.Keys.Cryptography;
+
 namespace Microsoft.Azure.CosmosRepository.Options;
 
 /// <summary>
@@ -103,6 +105,30 @@ public class RepositoryOptions
     /// Ensure that ContainerPerItemType is set to true for the container name configured here to take affect.
     /// </summary>
     public IItemContainerBuilder ContainerBuilder { get; } = new DefaultItemContainerBuilder();
+
+    /// <summary>
+    /// A builder to configure containers.
+    /// Ensure that ContainerPerItemType is set to true for the container name configured here to take affect.
+    /// </summary>
+    public KeyResolver? EncryptionKeyResolver { get; set; } = null;
+
+    /// <summary>
+    /// A builder to configure containers.
+    /// Ensure that ContainerPerItemType is set to true for the container name configured here to take affect.
+    /// </summary>
+    public string? EncryptionKeyResolverName { get; set; } = null;
+
+    /// <summary>
+    /// A builder to configure containers.
+    /// Ensure that ContainerPerItemType is set to true for the container name configured here to take affect.
+    /// </summary>
+    public string? EncryptionKeyName { get; set; } = null;
+
+    /// <summary>
+    /// A builder to configure containers.
+    /// Ensure that ContainerPerItemType is set to true for the container name configured here to take affect.
+    /// </summary>
+    public string? EncryptionKeyValue { get; set; } = null;
 
     /// <summary>
     /// Used to tell the SDK whether or not to try and creates databases and containers if they do not exist.

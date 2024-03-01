@@ -12,7 +12,9 @@ internal class ItemConfiguration(
     int defaultTimeToLive = -1,
     bool syncContainerProperties = false,
     ChangeFeedOptions? changeFeedOptions = null,
-    bool useStrictTypeChecking = true)
+    bool useStrictTypeChecking = true,
+    bool withEncryptionPolicy = false,
+    IEnumerable<ClientEncryptionIncludedPath> clientEncryptionPaths = null)
 {
     public Type Type { get; } = type;
 
@@ -31,4 +33,8 @@ internal class ItemConfiguration(
     public ChangeFeedOptions? ChangeFeedOptions { get; } = changeFeedOptions;
 
     public bool UseStrictTypeChecking { get; } = useStrictTypeChecking;
+
+    public bool WithEncryptionPolicy { get; set; } = withEncryptionPolicy;
+
+    public IEnumerable<ClientEncryptionIncludedPath> ClientEncryptionPaths { get; set; } = clientEncryptionPaths;
 }

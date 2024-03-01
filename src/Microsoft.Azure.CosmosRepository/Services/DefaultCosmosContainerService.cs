@@ -1,6 +1,9 @@
 ﻿// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
+using Azure.Security.KeyVault.Keys.Cryptography;
+using Microsoft.Azure.Cosmos.Encryption;
+
 namespace Microsoft.Azure.CosmosRepository.Services;
 
 class DefaultCosmosContainerService : ICosmosContainerService
@@ -49,6 +52,19 @@ class DefaultCosmosContainerService : ICosmosContainerService
                 UniqueKeyPolicy = itemConfiguration.UniqueKeyPolicy ?? new(),
                 DefaultTimeToLive = itemConfiguration.DefaultTimeToLive
             };
+
+            if (itemConfiguration.WithEncryptionPolicy)
+            {
+                foreach (var clientEncryptionPath in itemConfiguration.ClientEncryptionPaths)
+                {
+                    await database.CreateClientEncryptionKeyAsync(
+                        clientEncryptionPath.ClientEncryptionKeyId,
+                        clientEncryptionPath.EncryptionAlgorithm,
+                        new EncryptionKeyWrapMetadata(KeyEncryptionKeyResolverName.AzureKeyVault, _options.EncryptionKeyName, _options.EncryptionKeyValue, EncryptionAlgorithm.RsaOaep.ToString())
+                    );
+                }
+                containerProperties.ClientEncryptionPolicy = new ClientEncryptionPolicy(itemConfiguration.ClientEncryptionPaths);
+            }
 
             Container container =
                 _options.IsAutoResourceCreationIfNotExistsEnabled

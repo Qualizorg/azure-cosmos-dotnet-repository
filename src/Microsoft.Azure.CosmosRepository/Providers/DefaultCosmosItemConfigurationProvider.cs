@@ -10,7 +10,9 @@ class DefaultCosmosItemConfigurationProvider(
     ICosmosContainerDefaultTimeToLiveProvider containerDefaultTimeToLiveProvider,
     ICosmosContainerSyncContainerPropertiesProvider syncContainerPropertiesProvider,
     ICosmosThroughputProvider cosmosThroughputProvider,
-    ICosmosStrictTypeCheckingProvider cosmosStrictTypeCheckingProvider) : ICosmosItemConfigurationProvider
+    ICosmosStrictTypeCheckingProvider cosmosStrictTypeCheckingProvider,
+    ICosmosWithEncryptionPolicyProvider cosmosWithEncryptionPolicyProvider,
+    ICosmosClientEncryptionPathsProvider cosmosClientEncryptionPathsProvider) : ICosmosItemConfigurationProvider
 {
     private static readonly ConcurrentDictionary<Type, ItemConfiguration> _itemOptionsMap = new();
 
@@ -24,7 +26,7 @@ class DefaultCosmosItemConfigurationProvider(
     {
         IEnumerable<Type> itemTypes = (assemblies ?? AppDomain.CurrentDomain.GetAssemblies())
             .SelectMany(s => s.GetTypes())
-            .Where(p => typeof(IItem).IsAssignableFrom(p) && p is {IsInterface: false, IsAbstract: false});
+            .Where(p => typeof(IItem).IsAssignableFrom(p) && p is { IsInterface: false, IsAbstract: false });
 
         foreach (Type itemType in itemTypes)
         {
@@ -45,8 +47,10 @@ class DefaultCosmosItemConfigurationProvider(
         var sync = syncContainerPropertiesProvider.GetWhetherToSyncContainerProperties(itemType);
         ThroughputProperties? throughputProperties = cosmosThroughputProvider.GetThroughputProperties(itemType);
         var useStrictTypeChecking = cosmosStrictTypeCheckingProvider.UseStrictTypeChecking(itemType);
+        var withEncryptionPolicy = cosmosWithEncryptionPolicyProvider.GetWithEncryptionPolicy(itemType);
+        var clientEncryptionPaths = cosmosClientEncryptionPathsProvider.GetClientEncryptionPaths(itemType);
 
-        return new(
+        return new ItemConfiguration(
             itemType,
             containerName,
             partitionKeyPath,
@@ -54,6 +58,8 @@ class DefaultCosmosItemConfigurationProvider(
             throughputProperties,
             timeToLive,
             sync,
-            useStrictTypeChecking: useStrictTypeChecking);
+            useStrictTypeChecking: useStrictTypeChecking,
+            withEncryptionPolicy: withEncryptionPolicy,
+            clientEncryptionPaths: clientEncryptionPaths);
     }
 }

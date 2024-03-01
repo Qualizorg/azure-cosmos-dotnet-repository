@@ -23,9 +23,14 @@ public class ContainerOptionsBuilder(Type type)
     internal string? Name { get; private set; }
 
     /// <summary>
-    /// Name of the container.
+    /// If the container use encrypt policy or not
     /// </summary>
-    internal KeyResolver? keyResolver { get; private set; }
+    internal bool WithEncryptionPolicy { get; private set; }
+
+    /// <summary>
+    /// Client Encryption Paths
+    /// </summary>
+    internal IEnumerable<ClientEncryptionIncludedPath>? ClientEncryptionPaths { get; private set; }
 
     /// <summary>
     /// The partition key for the container.
@@ -65,6 +70,34 @@ public class ContainerOptionsBuilder(Type type)
     }
 
     /// <summary>
+    /// Sets the <see cref="WithEncryptionPolicy"/> value of the container
+    /// </summary>
+    /// <returns>Instance of <see cref="ContainerOptionsBuilder"/></returns>
+    public ContainerOptionsBuilder WithClientEncryptionPolicy()
+    {
+        WithEncryptionPolicy = true;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the <see cref="ClientEncryptionPaths"/> of the container
+    /// </summary>
+    /// <param name="clientEncryptionPath">The client encryption path</param>
+    /// <returns>Instance of <see cref="ContainerOptionsBuilder"/></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    public ContainerOptionsBuilder WithIncludedPath(ClientEncryptionIncludedPath clientEncryptionPath)
+    {
+        if (clientEncryptionPath == null) throw new ArgumentNullException(nameof(clientEncryptionPath));
+
+        if (ClientEncryptionPaths == null)
+            ClientEncryptionPaths = new List<ClientEncryptionIncludedPath> { clientEncryptionPath };
+        else
+            ClientEncryptionPaths = ClientEncryptionPaths.Append(clientEncryptionPath);
+
+        return this;
+    }
+
+    /// <summary>
     /// Sets the <see cref="Name"/> of the container
     /// </summary>
     /// <param name="name">The name of the container</param>
@@ -73,18 +106,6 @@ public class ContainerOptionsBuilder(Type type)
     public ContainerOptionsBuilder WithContainer(string name)
     {
         Name = name ?? throw new ArgumentNullException(nameof(name));
-        return this;
-    }
-
-    /// <summary>
-    /// Sets the <see cref="keyResolver"/> of the container
-    /// </summary>
-    /// <param name="keyResolver">The key of the container</param>
-    /// <returns>Instance of <see cref="ContainerOptionsBuilder"/></returns>
-    /// <exception cref="ArgumentNullException"></exception>
-    public ContainerOptionsBuilder WithEncryption(KeyResolver keyResolver, string keyEncryptionKeyResolverName)
-    {
-        KeyResolver = keyResolver ?? throw new ArgumentNullException(nameof(keyResolver));
         return this;
     }
 

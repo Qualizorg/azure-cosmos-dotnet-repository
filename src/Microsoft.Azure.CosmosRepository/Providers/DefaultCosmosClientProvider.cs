@@ -1,6 +1,8 @@
 ﻿// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
+using Microsoft.Azure.Cosmos.Encryption;
+
 namespace Microsoft.Azure.CosmosRepository.Providers;
 
 class DefaultCosmosClientProvider : ICosmosClientProvider, IDisposable
@@ -22,9 +24,17 @@ class DefaultCosmosClientProvider : ICosmosClientProvider, IDisposable
         _lazyCosmosClient = new Lazy<CosmosClient>(GetCosmoClient);
     }
 
-    CosmosClient GetCosmoClient() => _options.TokenCredential is not null && _options.AccountEndpoint is not null
+    CosmosClient GetCosmoClient()
+    {
+        var cosmosClient = _options.TokenCredential is not null && _options.AccountEndpoint is not null
             ? new CosmosClient(_options.AccountEndpoint, _options.TokenCredential, _cosmosClientOptions)
             : new CosmosClient(_options.CosmosConnectionString, _cosmosClientOptions);
+        if (_options.EncryptionKeyResolver is not null)
+        {
+            cosmosClient = cosmosClient.WithEncryption(_options.EncryptionKeyResolver, _options.EncryptionKeyResolverName);
+        }
+        return cosmosClient;
+    }
 
     /// <inheritdoc/>
     public DefaultCosmosClientProvider(

@@ -1,6 +1,8 @@
 ﻿// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
+using Microsoft.Azure.CosmosRepository.Providers;
+
 namespace Microsoft.Extensions.DependencyInjection;
 
 /// <summary>
@@ -62,7 +64,9 @@ public static class ServiceCollectionExtensions
             .AddSingleton<IChangeFeedService, DefaultChangeFeedService>()
             .AddSingleton<ILeaseContainerProvider, DefaultLeaseContainerProvider>()
             .AddSingleton<IChangeFeedOptionsProvider, DefaultChangeFeedOptionsProvider>()
-            .AddSingleton<ICosmosStrictTypeCheckingProvider, DefaultCosmosStrictTypeCheckingProvider>();
+            .AddSingleton<ICosmosStrictTypeCheckingProvider, DefaultCosmosStrictTypeCheckingProvider>()
+            .AddSingleton<ICosmosWithEncryptionPolicyProvider, DefaultCosmosWithEncryptionProvider>()
+            .AddSingleton<ICosmosClientEncryptionPathsProvider, DefaultCosmosClientEncryptionPaths>();
 
         if (setupAction != default)
         {
