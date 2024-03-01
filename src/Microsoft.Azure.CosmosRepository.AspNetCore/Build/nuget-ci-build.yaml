@@ -1,0 +1,61 @@
+trigger: none
+parameters:
+- name: PerformTests
+  displayName: Execute Tests in Pipeline
+  type: boolean
+  default: true
+- name: PublishCodeCoverageResults
+  displayName: Publish Code Coverage Results
+  type: boolean
+  default: true
+- name: Image
+  displayName: Pool Image
+  type: string
+  default: windows-latest
+  values:
+  - windows-latest
+  - ubuntu-latest
+- name: WithNugetCache
+  displayName: Execute pipeline with Nuget Cache
+  type: boolean
+  default: false
+- name: PushNuget
+  displayName: Push Nuget to Feed
+  type: boolean
+  default: true
+variables:
+- name: BuildProjectsTargets
+  value: '**/*.csproj'
+  readonly: true
+- name: TestProjectTargets
+  value: '**/*[Tt]ests/*.csproj'
+  readonly: true
+- name: NUGET_PACKAGES
+  value: $(Pipeline.Workspace)/.nuget/packages
+  readonly: true
+stages:
+- stage: __default
+  jobs:
+  - job: Job
+    pool:
+      name: Azure Pipelines
+      vmImage: ${{parameters.Image}}
+    steps:
+    - template: tasks/restore.yaml
+      parameters:
+        NUGET_PACKAGES: $(NUGET_PACKAGES)
+        WithNugetCache: ${{parameters.WithNugetCache}}
+    - template: tasks/build.yaml
+      parameters:
+        BuildProjectsTargets: $(BuildProjectsTargets)
+    - ${{ if eq(parameters.PerformTests, true) }}:
+      - template: tasks/test.yaml
+        parameters:
+          TestProjectTargets: $(TestProjectTargets)
+    - ${{ if and(eq(parameters.PerformTests, true), eq(parameters.PublishCodeCoverageResults, true)) }}:
+        - template: tasks/publish-test-coverage.yaml
+          parameters:
+            ExcludeClasses: $(classes-to-exclude-from-coverage)
+    - template: tasks/nuget-push.yaml
+      parameters:
+        PushNuget: ${{parameters.PushNuget}}

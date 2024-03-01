@@ -12,6 +12,8 @@ public class DefaultCosmosItemConfigurationProviderTests
     readonly Mock<ICosmosContainerSyncContainerPropertiesProvider> _syncContainerPropertiesProvider = new();
     readonly Mock<ICosmosThroughputProvider> _throughputProvider = new();
     readonly Mock<ICosmosStrictTypeCheckingProvider> _strictTypeCheckingProvider = new();
+    readonly Mock<ICosmosClientEncryptionPathsProvider> _cosmosClientEncryptionPathsProvider = new();
+    readonly Mock<ICosmosWithEncryptionPolicyProvider> _cosmosWithEncryptionPolicyProvider = new();
 
     [Fact]
     public void GetOptionsAlwaysGetOptionsForItem()
@@ -23,7 +25,9 @@ public class DefaultCosmosItemConfigurationProviderTests
             _defaultTimeToLiveProvider.Object,
             _syncContainerPropertiesProvider.Object,
             _throughputProvider.Object,
-            _strictTypeCheckingProvider.Object);
+            _strictTypeCheckingProvider.Object,
+            _cosmosWithEncryptionPolicyProvider.Object,
+            _cosmosClientEncryptionPathsProvider.Object);
 
         UniqueKeyPolicy uniqueKeyPolicy = new();
         var throughputProperties = ThroughputProperties.CreateAutoscaleThroughput(400);
@@ -55,7 +59,9 @@ public class DefaultCosmosItemConfigurationProviderTests
             _defaultTimeToLiveProvider.Object,
             _syncContainerPropertiesProvider.Object,
             _throughputProvider.Object,
-            _strictTypeCheckingProvider.Object);
+            _strictTypeCheckingProvider.Object,
+            _cosmosWithEncryptionPolicyProvider.Object,
+            _cosmosClientEncryptionPathsProvider.Object);
 
         _containerNameProvider.Setup(o => o.GetContainerName(It.IsAny<Type>())).Returns<Type>(t => t.FullName!);
 
@@ -70,11 +76,6 @@ public class DefaultCosmosItemConfigurationProviderTests
     }
 
     class Item1 : Item
-    {
-
-    }
-
-    class Item2 : Item
     {
 
     }

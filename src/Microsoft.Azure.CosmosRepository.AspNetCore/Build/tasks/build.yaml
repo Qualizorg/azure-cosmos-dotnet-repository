@@ -1,0 +1,14 @@
+parameters:
+  - name: BuildProjectsTargets
+    type: string
+    default: '**/*.csproj'
+  - name: BuildConfiguration
+    type: string
+    default: Release
+
+steps:
+  - task: DotNetCoreCLI@2
+    displayName: Build
+    inputs:
+      projects: '${{parameters.BuildProjectsTargets}}'
+      arguments: '--configuration ${{parameters.BuildConfiguration}} --output $(build.artifactstagingdirectory) --no-restore'

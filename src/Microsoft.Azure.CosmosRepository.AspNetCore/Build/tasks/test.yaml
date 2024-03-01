@@ -1,0 +1,15 @@
+parameters:
+  - name: TestProjectTargets
+    type: string
+    default: '**/*[Tt]ests/*.csproj'
+  - name: BuildConfiguration
+    type: string
+    default: Release
+
+steps:
+  - task: DotNetCoreCLI@2
+    displayName: Test
+    inputs:
+      command: test
+      projects: '${{parameters.TestProjectTargets}}'
+      arguments: '--configuration ${{parameters.BuildConfiguration}} --collect:"XPlat Code Coverage" --no-restore'

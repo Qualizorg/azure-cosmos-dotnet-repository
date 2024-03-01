@@ -1,0 +1,23 @@
+parameters:
+  - name: NuGetFeedType
+    type: string
+    default: internal
+    values:
+      - internal
+      - external
+  - name: PublishVstsFeed
+    type: string
+    default: Qualiview
+  - name: PushNuget
+    type: boolean
+    default: true
+
+steps:
+  - task: NuGetCommand@2
+    displayName: Nuget Push
+    inputs:
+      command: 'push'
+      packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
+      nuGetFeedType: '${{parameters.NuGetFeedType}}'
+      publishVstsFeed: '${{parameters.PublishVstsFeed}}'
+    condition: and(succeeded(), ${{ eq(parameters.PushNuget, true) }})

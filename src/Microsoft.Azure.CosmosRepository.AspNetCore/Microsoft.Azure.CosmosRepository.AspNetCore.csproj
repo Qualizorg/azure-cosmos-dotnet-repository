@@ -17,12 +17,12 @@
         <Authors>IEvangelist,Mumby0168</Authors>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <Title>IEvangelist Azure Cosmos DB Repository Client library</Title>
-        <PackageId>IEvangelist.Azure.CosmosRepository.AspNetCore</PackageId>
+        <PackageId>QV.IEvangelist.Azure.CosmosRepository.AspNetCore</PackageId>
         <PackageTags>microsoft;azure;cosmos;cosmosdb;documentdb;docdb;nosql;azureunofficial;dotnetcore;netcore;netstandard</PackageTags>
         <PackageProjectUrl>https://github.com/IEvangelist/azure-cosmos-dotnet-repository</PackageProjectUrl>
         <PublishRepositoryUrl Condition=" '$(ProjectRef)' != 'True' ">true</PublishRepositoryUrl>
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <PlatformTarget>AnyCPU</PlatformTarget>
         <ShippingScope>External</ShippingScope>
@@ -61,5 +61,8 @@
             <PackagePath></PackagePath>
         </None>
         <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Build\" />
     </ItemGroup>
 </Project>

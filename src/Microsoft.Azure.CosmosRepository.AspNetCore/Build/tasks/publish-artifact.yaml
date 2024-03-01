@@ -1,0 +1,18 @@
+parameters:
+  - name: BuildConfiguration
+    type: string
+    default: Release
+
+steps:
+- task: DotNetCoreCLI@2
+  displayName: Prepare Publish
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    arguments: '--output $(build.artifactstagingdirectory)/output --configuration ${{parameters.BuildConfiguration}}'
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/output'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
+  condition: succeeded()

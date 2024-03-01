@@ -1,0 +1,33 @@
+parameters:
+  - name: FeedsToUse
+    type: string
+    default: 'select'
+  - name: VstsFeed
+    type: string
+    default: '99faabe4-449c-40f0-8b4c-43417c2cb21f'
+  - name: NUGET_PACKAGES
+    type: string
+    default: $(Pipeline.Workspace)/.nuget/packages
+  - name: WithNugetCache
+    type: boolean
+    default: false
+
+steps:
+- task: Cache@2
+  displayName: 'Cache NuGet packages'
+  inputs:
+    key: 'nuget | "$(Agent.OS)" | **/packages.lock.json,!**/bin/**,!**/obj/**'
+    restoreKeys: |
+       nuget | "$(Agent.OS)"
+       nuget
+    path: '${{parameters.NUGET_PACKAGES}}'
+    cacheHitVar: 'CACHE_RESTORED'
+  continueOnError: true
+  condition: eq('${{parameters.WithNugetCache}}', true)
+
+- task: DotNetCoreCLI@2
+  displayName: 'Restore'
+  inputs:
+    command: 'restore'
+    feedsToUse: '${{ parameters.feedsToUse }}'
+    vstsFeed: '${{ parameters.vstsFeed }}'
