@@ -20,7 +20,7 @@
         <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
         <AssemblyName>Microsoft.Azure.CosmosRepository</AssemblyName>
         <Title>IEvangelist Azure Cosmos DB Repository Client library</Title>
-        <PackageId>IEvangelist.Azure.CosmosRepository</PackageId>
+        <PackageId>QV.IEvangelist.Azure.CosmosRepository</PackageId>
         <PackageTags>microsoft;azure;cosmos;cosmosdb;documentdb;docdb;nosql;azureunofficial;dotnetcore;netcore;netstandard</PackageTags>
         <PackageProjectUrl>https://github.com/IEvangelist/azure-cosmos-dotnet-repository</PackageProjectUrl>
         <PublishRepositoryUrl Condition=" '$(ProjectRef)' != 'True' ">true</PublishRepositoryUrl>
