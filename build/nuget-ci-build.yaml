@@ -47,7 +47,7 @@ stages:
         WithNugetCache: ${{parameters.WithNugetCache}}
     - template: tasks/build.yaml
       parameters:
-        BuildProjectsTargets: $(BuildProjectsTargets)
+        BuildProjectsTargets: '**/Microsoft.Azure.CosmosRepository.AspNetCore.csproj'
     - ${{ if eq(parameters.PerformTests, true) }}:
       - template: tasks/test.yaml
         parameters:
