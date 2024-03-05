@@ -25,7 +25,7 @@
         <PackageProjectUrl>https://github.com/IEvangelist/azure-cosmos-dotnet-repository</PackageProjectUrl>
         <PublishRepositoryUrl Condition=" '$(ProjectRef)' != 'True' ">true</PublishRepositoryUrl>
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <PlatformTarget>AnyCPU</PlatformTarget>
         <ShippingScope>External</ShippingScope>
