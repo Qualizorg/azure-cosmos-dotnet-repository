@@ -6,13 +6,13 @@ using Microsoft.Azure.Cosmos.Encryption;
 
 namespace Microsoft.Azure.CosmosRepository.Services;
 
-class DefaultCosmosContainerService : ICosmosContainerService
+internal class DefaultCosmosContainerService : ICosmosContainerService
 {
-    readonly ICosmosItemConfigurationProvider _cosmosItemConfigurationProvider;
-    readonly ICosmosClientProvider _cosmosClientProvider;
-    readonly ILogger<DefaultCosmosContainerService> _logger;
-    readonly RepositoryOptions _options;
-    readonly Dictionary<string, DateTime> _containerSyncLog = new();
+    private readonly ICosmosItemConfigurationProvider _cosmosItemConfigurationProvider;
+    private readonly ICosmosClientProvider _cosmosClientProvider;
+    private readonly ILogger<DefaultCosmosContainerService> _logger;
+    private readonly RepositoryOptions _options;
+    private readonly Dictionary<string, DateTime> _containerSyncLog = [];
 
     public DefaultCosmosContainerService(ICosmosItemConfigurationProvider cosmosItemConfigurationProvider,
         ICosmosClientProvider cosmosClientProvider,
@@ -43,26 +43,46 @@ class DefaultCosmosContainerService : ICosmosContainerService
                     : await _cosmosClientProvider.UseClientAsync(
                         client => Task.FromResult(client.GetDatabase(_options.DatabaseId))).ConfigureAwait(false);
 
+            if (itemConfiguration.WithEncryptionPolicy)
+            {
+                foreach (var item in _options.EncryptionKeys)
+                {
+                    try
+                    {
+                        await database.CreateClientEncryptionKeyAsync(
+                               item.ClientEncryptionKeyId,
+                               item.EncryptionAlgorithm,
+                               item.EncryptionKeyWrapMetadata
+                           );
+                    }
+                    catch (CosmosException ex)
+                    {
+                        if (ex.StatusCode != System.Net.HttpStatusCode.Conflict)
+                            throw;
+                    }
+                }
+            }
+
             ContainerProperties containerProperties = new()
             {
                 Id = _options.ContainerPerItemType
                     ? itemConfiguration.ContainerName
                     : _options.ContainerId,
-                PartitionKeyPath = itemConfiguration.PartitionKeyPath,
                 UniqueKeyPolicy = itemConfiguration.UniqueKeyPolicy ?? new(),
                 DefaultTimeToLive = itemConfiguration.DefaultTimeToLive
             };
 
+            if (itemConfiguration.PartitionKeyPaths.Count() > 1)
+                containerProperties.PartitionKeyPaths = itemConfiguration.PartitionKeyPaths.ToList();
+            else
+                containerProperties.PartitionKeyPath = itemConfiguration.PartitionKeyPaths.Last();
+
             if (itemConfiguration.WithEncryptionPolicy)
             {
-                foreach (var clientEncryptionPath in itemConfiguration.ClientEncryptionPaths)
-                {
-                    await database.CreateClientEncryptionKeyAsync(
-                        clientEncryptionPath.ClientEncryptionKeyId,
-                        clientEncryptionPath.EncryptionAlgorithm,
-                        new EncryptionKeyWrapMetadata(KeyEncryptionKeyResolverName.AzureKeyVault, _options.EncryptionKeyName, _options.EncryptionKeyValue, EncryptionAlgorithm.RsaOaep.ToString())
-                    );
-                }
+                // DO THE CHECKUPS ON
+                // Make sure that the paths, when they use a specific clientecryptionkey, the encryption algorith of the path needs to be the same as the one from the key
+
+                // GET THE KEYS BY NAME AND CHECK THAT encryption algorithm is the same as the one in the path
                 containerProperties.ClientEncryptionPolicy = new ClientEncryptionPolicy(itemConfiguration.ClientEncryptionPaths);
             }
 

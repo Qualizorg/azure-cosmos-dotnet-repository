@@ -137,6 +137,12 @@ public class RepositoryOptions
     public bool IsAutoResourceCreationIfNotExistsEnabled { get; set; } = true;
 
     /// <summary>
+    /// A builder to configure encryption options.
+    /// Ensure that WithEncryptionPolicy is set to true for the Encryption Keys configured here to take affect.
+    /// </summary>
+    public List<RepositoryEncryptionOptions>? EncryptionKeys { get; set; }
+
+    /// <summary>
     /// Container options provided by the <see cref="Builders.IItemContainerBuilder"/>
     /// </summary>
     internal IReadOnlyList<ContainerOptionsBuilder> ContainerOptions => ContainerBuilder.Options;

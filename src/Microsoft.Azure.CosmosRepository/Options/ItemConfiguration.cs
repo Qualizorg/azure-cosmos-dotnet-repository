@@ -1,40 +1,70 @@
-// Copyright (c) David Pine. All rights reserved.
-// Licensed under the MIT License.
+// Copyright (c) David Pine. All rights reserved. Licensed under the MIT License.
 
 namespace Microsoft.Azure.CosmosRepository.Options;
 
-internal class ItemConfiguration(
-    Type type,
-    string containerName,
-    string partitionKeyPath,
-    UniqueKeyPolicy? uniqueKeyPolicy,
-    ThroughputProperties? throughputProperties,
-    int defaultTimeToLive = -1,
-    bool syncContainerProperties = false,
-    ChangeFeedOptions? changeFeedOptions = null,
-    bool useStrictTypeChecking = true,
-    bool withEncryptionPolicy = false,
-    IEnumerable<ClientEncryptionIncludedPath> clientEncryptionPaths = null)
+internal class ItemConfiguration
 {
-    public Type Type { get; } = type;
+    public ItemConfiguration(
+        Type type,
+        string containerName,
+        string partitionKeyPath,
+        UniqueKeyPolicy? uniqueKeyPolicy,
+        ThroughputProperties? throughputProperties,
+        int defaultTimeToLive = -1,
+        bool syncContainerProperties = false,
+        ChangeFeedOptions? changeFeedOptions = null,
+        bool useStrictTypeChecking = true,
+        bool withEncryptionPolicy = false,
+        IEnumerable<ClientEncryptionIncludedPath>? clientEncryptionPaths = null)
+       : this(type, containerName, new[] { partitionKeyPath }, uniqueKeyPolicy, throughputProperties, defaultTimeToLive, syncContainerProperties, changeFeedOptions, useStrictTypeChecking, withEncryptionPolicy, clientEncryptionPaths)
+    {
+    }
 
-    public string ContainerName { get; } = containerName;
+    public ItemConfiguration(
+        Type type,
+        string containerName,
+        IEnumerable<string> partitionKeyPaths,
+        UniqueKeyPolicy? uniqueKeyPolicy = null,
+        ThroughputProperties? throughputProperties = null,
+        int defaultTimeToLive = -1,
+        bool syncContainerProperties = false,
+        ChangeFeedOptions? changeFeedOptions = null,
+        bool useStrictTypeChecking = true,
+        bool withEncryptionPolicy = false,
+        IEnumerable<ClientEncryptionIncludedPath>? clientEncryptionPaths = null)
+    {
+        Type = type;
+        ContainerName = containerName;
+        PartitionKeyPaths = partitionKeyPaths;
+        UniqueKeyPolicy = uniqueKeyPolicy;
+        ThroughputProperties = throughputProperties;
+        DefaultTimeToLive = defaultTimeToLive;
+        SyncContainerProperties = syncContainerProperties;
+        ChangeFeedOptions = changeFeedOptions;
+        UseStrictTypeChecking = useStrictTypeChecking;
+        WithEncryptionPolicy = withEncryptionPolicy;
+        ClientEncryptionPaths = clientEncryptionPaths;
+    }
 
-    public string PartitionKeyPath { get; } = partitionKeyPath;
+    public Type Type { get; }
 
-    public UniqueKeyPolicy? UniqueKeyPolicy { get; } = uniqueKeyPolicy;
+    public string ContainerName { get; }
 
-    public ThroughputProperties? ThroughputProperties { get; } = throughputProperties;
+    public IEnumerable<string> PartitionKeyPaths { get; }
 
-    public int DefaultTimeToLive { get; } = defaultTimeToLive;
+    public UniqueKeyPolicy? UniqueKeyPolicy { get; }
 
-    public bool SyncContainerProperties { get; } = syncContainerProperties;
+    public ThroughputProperties? ThroughputProperties { get; }
 
-    public ChangeFeedOptions? ChangeFeedOptions { get; } = changeFeedOptions;
+    public int DefaultTimeToLive { get; }
 
-    public bool UseStrictTypeChecking { get; } = useStrictTypeChecking;
+    public bool SyncContainerProperties { get; }
 
-    public bool WithEncryptionPolicy { get; set; } = withEncryptionPolicy;
+    public ChangeFeedOptions? ChangeFeedOptions { get; }
 
-    public IEnumerable<ClientEncryptionIncludedPath> ClientEncryptionPaths { get; set; } = clientEncryptionPaths;
+    public bool UseStrictTypeChecking { get; }
+
+    public bool WithEncryptionPolicy { get; }
+
+    public IEnumerable<ClientEncryptionIncludedPath>? ClientEncryptionPaths { get; }
 }
