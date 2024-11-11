@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using Azure.Security.KeyVault.Keys.Cryptography;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Encryption;
 
 namespace Microsoft.Azure.CosmosRepository.Services;
@@ -43,7 +44,7 @@ internal class DefaultCosmosContainerService : ICosmosContainerService
                     : await _cosmosClientProvider.UseClientAsync(
                         client => Task.FromResult(client.GetDatabase(_options.DatabaseId))).ConfigureAwait(false);
 
-            if (itemConfiguration.WithEncryptionPolicy)
+            if (itemConfiguration.WithEncryptionPolicy && _options.EncryptionKeys?.Any() == true)
             {
                 foreach (var item in _options.EncryptionKeys)
                 {
