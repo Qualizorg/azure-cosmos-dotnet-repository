@@ -16,6 +16,7 @@
         <Version Condition=" '$(VersionSuffix)' == '' ">$(ClientVersion)</Version>
         <Version Condition=" '$(VersionSuffix)' != '' ">$(ClientVersion)-$(VersionSuffix)</Version>
         <FileVersion>$(ClientVersion)</FileVersion>
+        <Version>0.0.6.0-sandboxed</Version>
         <Authors>IEvangelist</Authors>
         <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
         <AssemblyName>Microsoft.Azure.CosmosRepository</AssemblyName>
